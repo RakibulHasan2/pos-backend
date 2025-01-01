@@ -1,4 +1,4 @@
 # pos-backend
 dev branch created
-rakib branch createdss
+rakib branch created
 porosh branch created
