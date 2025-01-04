@@ -1,7 +1,8 @@
 const express = require('express');
 const {
     createCategory,
-    getAllCategories
+    getAllCategories,
+    getCategoryById
 } = require('../../src/controllers/categoryController');
 
 const router = express.Router();
@@ -12,13 +13,9 @@ router.post('/crate-category', createCategory);
 // Get all products
 router.get('/getCategories', getAllCategories);
 
-// // Get a single product by ID
-// router.get('/single/:id', getProductById);
+// Get a single product by ID
+router.get('/single/:id', getCategoryById);
 
-// // Update a product
-// router.put('/update/:id', updateProduct);
 
-// // Delete a product
-// router.delete('/delete/:id', deleteProduct);
 
 module.exports = router;
