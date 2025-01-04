@@ -12,7 +12,6 @@ const productSchema = new mongoose.Schema({
     p_images: { type: String, default: "" }, // Array of image URLs
     p_unit: { type: String, required: true },
     tax: { type: Number, required: true }, // Percentage value
-    tax_method: { type: String, enum: ['inclusive', 'exclusive'], default: 'exclusive' },
     p_details: { type: String, default: '' },
 }, { timestamps: true });
 

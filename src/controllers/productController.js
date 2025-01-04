@@ -13,7 +13,6 @@ const createProduct = async (req, res) => {
             p_images,
             p_unit,
             tax,
-            tax_method,
             p_details,
         } = req.body;
 
@@ -33,7 +32,6 @@ const createProduct = async (req, res) => {
             p_images,
             p_unit,
             tax,
-            tax_method,
             p_details,
         });
 
