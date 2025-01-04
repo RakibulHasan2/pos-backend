@@ -47,13 +47,16 @@ const createProduct = async (req, res) => {
 // Get all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
-        res.status(200).json(products);
+      const products = await Product.find();
+      res.status(200).json({ 
+        message: 'All products retrieved successfully.', 
+        totalProducts: products.length,  // Number of products
+        products: products 
+      }); 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
-
+  };
 // Get a single product by ID
 const getProductById = async (req, res) => {
     try {
