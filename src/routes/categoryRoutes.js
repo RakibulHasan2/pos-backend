@@ -1,6 +1,7 @@
 const express = require('express');
 const {
     createCategory,
+    getAllCategories
 } = require('../../src/controllers/categoryController');
 
 const router = express.Router();
@@ -8,8 +9,8 @@ const router = express.Router();
 // Create a new product
 router.post('/crate-category', createCategory);
 
-// // Get all products
-// router.get('/getProduct', getAllProducts);
+// Get all products
+router.get('/getCategories', getAllCategories);
 
 // // Get a single product by ID
 // router.get('/single/:id', getProductById);
