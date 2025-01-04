@@ -22,9 +22,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['stuff', 'admin', 'customer'],
-        default: 'customer',
-        unique: true,
+        enum: ['staff', 'manager'],
+        required: true,
     },
 }, { timestamps: true });
 
@@ -36,4 +35,4 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('users', userSchema);
