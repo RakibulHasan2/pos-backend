@@ -7,13 +7,13 @@ const {
 
 const router = express.Router();
 
-// Create a new product
+// Create a new category
 router.post('/crate-category', createCategory);
 
-// Get all products
+// Get all categories
 router.get('/getCategories', getAllCategories);
 
-// Get a single product by ID
+// Get a single category by ID
 router.get('/single/:id', getCategoryById);
 
 
