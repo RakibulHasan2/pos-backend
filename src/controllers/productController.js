@@ -13,7 +13,6 @@ const createProduct = async (req, res) => {
             p_images,
             p_unit,
             tax,
-            tax_method,
             p_details,
         } = req.body;
 
@@ -33,7 +32,6 @@ const createProduct = async (req, res) => {
             p_images,
             p_unit,
             tax,
-            tax_method,
             p_details,
         });
 
@@ -49,13 +47,16 @@ const createProduct = async (req, res) => {
 // Get all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
-        res.status(200).json(products);
+      const products = await Product.find();
+      res.status(200).json({ 
+        message: 'All products retrieved successfully.', 
+        totalProducts: products.length,  // Number of products
+        products: products 
+      }); 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
-};
-
+  };
 // Get a single product by ID
 const getProductById = async (req, res) => {
     try {
@@ -72,19 +73,32 @@ const getProductById = async (req, res) => {
     }
 };
 
-// Update a product
+
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
 
+        // Fetch the current product data
+        const currentProduct = await Product.findById(id);
+
+        if (!currentProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Check if the incoming data is identical to the current data
+        const isSame = Object.keys(req.body).every(
+            (key) => JSON.stringify(req.body[key]) === JSON.stringify(currentProduct[key])
+        );
+
+        if (isSame) {
+            return res.status(200).json({ message: 'No changes made to product' });
+        }
+
+        // Update the product if data is different
         const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
             new: true,
             runValidators: true,
         });
-
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
 
         res.status(200).json({
             message: 'Product updated successfully',
@@ -94,6 +108,9 @@ const updateProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
 
 // Delete a product
 const deleteProduct = async (req, res) => {
