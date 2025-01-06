@@ -29,6 +29,7 @@ const createUser = async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
+                password:user.password
             },
         });
     } catch (error) {
@@ -124,19 +125,23 @@ const updateUser = async (req, res) => {
         await user.save();
 
         res.status(200).json({
-            message: 'User updated successfully',
+            message: 'updated successfully',
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
+                password: user.password
             },
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
 
 // Login User
 const loginUser = async (req, res) => {
