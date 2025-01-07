@@ -18,10 +18,10 @@ router.get('/getCategories', getAllCategories);
 // Get a single category by ID
 router.get('/single/:id', getCategoryById);
 
-// Update a product
+// Update a category
 router.put('/update/:id', updateCategory);
 
-// Delete a product
+// Delete a category
 router.delete('/delete/:id', deleteCategory);
 
 module.exports = router;
