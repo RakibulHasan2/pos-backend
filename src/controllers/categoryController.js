@@ -56,8 +56,66 @@ const getCategoryById = async (req, res) => {
     }
 };
 
+// update category
+const updateCategory  = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Fetch the current Category data
+        const currentCategory= await Categories.findById(id);
+
+        if (!currentCategory) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        // Check if the incoming data is identical to the current data
+        const isSame = Object.keys(req.body).every(
+            (key) => JSON.stringify(req.body[key]) === JSON.stringify(currentCategory[key])
+        );
+
+        if (isSame) {
+            return res.status(200).json({ message: 'No changes made to Category' });
+        }
+
+        // Update the product if data is different
+        const updatedCategory = await Categories.findByIdAndUpdate(id, req.body, {
+            new: true,
+            runValidators: true,
+        });
+
+        res.status(200).json({
+            message: 'Category updated successfully',
+            category: updatedCategory,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+
+// Delete a Category 
+const deleteCategory  = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedCategory = await Categories.findByIdAndDelete(id);
+
+        if (!deletedCategory) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        res.status(200).json({ message: 'Category deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createCategory,
     getAllCategories,
-    getCategoryById
+    getCategoryById,
+    updateCategory,
+    deleteCategory 
 };
