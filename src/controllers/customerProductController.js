@@ -1,61 +1,145 @@
-const CustomerProduct = require('../../src/models/CustomerProductModel');  // Import your model
+const CustomerProduct = require('../../src/models/CustomerProductModel');
 
-exports.createCustomerProduct = async (req, res) => {
+const createCustomerProduct = async (req, res) => {
   try {
-    // Destructuring input fields from the request body
     const {
-      customer_name,
-      customer_email,
-      customer_phone,
-      customer_address,
-      purchase_date,
-      purchased_products,
-      total_item,
-      grand_total,
-      customer_point,
+      customerName,
+      customerEmail,
+      customerPhone,
+      customerAddress,
+      purchaseDate,
+      purchasedProducts,
+      grandTotal,
+      totalItems,
+      paymentStatus,
     } = req.body;
 
-    // Convert total_item to a number and validate it
-    const totalItem = Number(total_item);
-    if (isNaN(totalItem) || totalItem <= 0) {
-      return res.status(400).json({ message: "Invalid total item value." });
-    }
+    // Check if the email or phone already exists
+    // const existingCustomer = await CustomerProduct.findOne({
+    //   $or: [
+    //     { customerEmail },
+    //     { customerPhone },
+    //   ],
+    // });
 
-    // Calculate customer_point if it's not provided in the request
-    const calculatedCustomerPoint = customer_point || totalItem * 100;
+    // if (existingCustomer) {
+    //   return res.status(400).json({
+    //     message: "Customer with this email or phone number already exists.",
+    //   });
+    // }
 
-    // Check for unique email and phone
-    const emailExists = await CustomerProduct.findOne({ customer_email });
-    const phoneExists = await CustomerProduct.findOne({ customer_phone });
+    // Calculate customer points
+    const customerPoints = totalItems * 100;
 
-    if (emailExists || phoneExists) {
-      return res.status(400).json({ message: "Email or Phone already exists. Please use unique values." });
-    }
-
-    // Create new CustomerProduct using your model
+    // Create a new customer product entry
     const newCustomerProduct = new CustomerProduct({
-      customer_name,
-      customer_email,
-      customer_phone,
-      customer_address,
-      purchase_date,
-      purchased_products,
-      total_item: totalItem,
-      grand_total: Number(grand_total), // Ensure grand_total is treated as a number
-      customer_point: calculatedCustomerPoint,
+      customerName,
+      customerEmail,
+      customerPhone,
+      customerAddress,
+      purchaseDate, // Include this field
+      purchasedProducts,
+      grandTotal,
+      totalItems,
+      customerPoints,
+      paymentStatus,
     });
-
-    // Save the new customer product to the database
+    
+    // Save the customer product to the database
     await newCustomerProduct.save();
 
-    // Respond with the newly created customer product
     res.status(201).json({
-      message: "Customer Product saved successfully",
+      message: "Customer product created successfully.",
       data: newCustomerProduct,
     });
-
   } catch (error) {
-    console.error("Error saving customer product:", error);
-    res.status(500).json({ message: "Server error. Please try again later." });
+    res.status(500).json({
+      message: "Failed to create customer product.",
+      error: error.message,
+    });
   }
 };
+// Function to fetch all customer products
+const getAllCustomerProducts = async (req, res) => {
+  try {
+    // Fetch all customer products
+    const customerProducts = await CustomerProduct.find();
+
+    if (customerProducts.length === 0) {
+      return res.status(404).json({
+        message: "No customer products found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Customer products retrieved successfully.",
+      data: customerProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch customer products.",
+      error: error.message,
+    });
+  }
+};
+
+const getSingleCustomerProduct = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
+
+    // Fetch the single customer product by its ID
+    const customerProduct = await CustomerProduct.findById(id);
+
+    // Check if the product exists
+    if (!customerProduct) {
+      return res.status(404).json({
+        message: "Customer product not found.",
+      });
+    }
+
+    // Send the response with the found product
+    res.status(200).json({
+      message: "Customer product retrieved successfully.",
+      data: customerProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch customer product.",
+      error: error.message,
+    });
+  }
+};
+
+const updateCustomerProduct = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
+    const updateData = req.body; // Data to update the product with
+
+    // Find the product by ID and update it
+    const updatedProduct = await CustomerProduct.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied to the updated data
+    });
+
+    // Check if the product exists
+    if (!updatedProduct) {
+      return res.status(404).json({
+        message: "Customer product not found.",
+      });
+    }
+
+    // Send the response with the updated product
+    res.status(200).json({
+      message: "Customer product updated successfully.",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update customer product.",
+      error: error.message,
+    });
+  }
+};
+
+
+module.exports = { createCustomerProduct , getAllCustomerProducts, getSingleCustomerProduct, updateCustomerProduct};
