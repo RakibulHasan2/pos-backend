@@ -59,5 +59,87 @@ const createCustomerProduct = async (req, res) => {
     });
   }
 };
+// Function to fetch all customer products
+const getAllCustomerProducts = async (req, res) => {
+  try {
+    // Fetch all customer products
+    const customerProducts = await CustomerProduct.find();
 
-module.exports = { createCustomerProduct };
+    if (customerProducts.length === 0) {
+      return res.status(404).json({
+        message: "No customer products found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Customer products retrieved successfully.",
+      data: customerProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch customer products.",
+      error: error.message,
+    });
+  }
+};
+
+const getSingleCustomerProduct = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
+
+    // Fetch the single customer product by its ID
+    const customerProduct = await CustomerProduct.findById(id);
+
+    // Check if the product exists
+    if (!customerProduct) {
+      return res.status(404).json({
+        message: "Customer product not found.",
+      });
+    }
+
+    // Send the response with the found product
+    res.status(200).json({
+      message: "Customer product retrieved successfully.",
+      data: customerProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch customer product.",
+      error: error.message,
+    });
+  }
+};
+
+const updateCustomerProduct = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
+    const updateData = req.body; // Data to update the product with
+
+    // Find the product by ID and update it
+    const updatedProduct = await CustomerProduct.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validation rules are applied to the updated data
+    });
+
+    // Check if the product exists
+    if (!updatedProduct) {
+      return res.status(404).json({
+        message: "Customer product not found.",
+      });
+    }
+
+    // Send the response with the updated product
+    res.status(200).json({
+      message: "Customer product updated successfully.",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update customer product.",
+      error: error.message,
+    });
+  }
+};
+
+
+module.exports = { createCustomerProduct , getAllCustomerProducts, getSingleCustomerProduct, updateCustomerProduct};
