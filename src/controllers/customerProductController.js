@@ -73,6 +73,7 @@ const getAllCustomerProducts = async (req, res) => {
 
     res.status(200).json({
       message: "Customer products retrieved successfully.",
+      totalCustomerProducts: customerProducts.length, // Number of customer products
       data: customerProducts,
     });
   } catch (error) {
@@ -141,5 +142,32 @@ const updateCustomerProduct = async (req, res) => {
   }
 };
 
+const deleteCustomerProduct = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the ID from the request parameters
 
-module.exports = { createCustomerProduct , getAllCustomerProducts, getSingleCustomerProduct, updateCustomerProduct};
+    // Find the product by ID and delete it
+    const deletedProduct = await CustomerProduct.findByIdAndDelete(id);
+
+    // Check if the product exists
+    if (!deletedProduct) {
+      return res.status(404).json({
+        message: "Customer product not found.",
+      });
+    }
+
+    // Send the response confirming deletion
+    res.status(200).json({
+      message: "Customer product deleted successfully.",
+      data: deletedProduct, // Optional: Include the deleted product details in the response
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to delete customer product.",
+      error: error.message,
+    });
+  }
+};
+
+
+module.exports = { createCustomerProduct , getAllCustomerProducts, getSingleCustomerProduct, updateCustomerProduct, deleteCustomerProduct};
